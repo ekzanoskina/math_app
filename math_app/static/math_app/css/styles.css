@@ -1,0 +1,76 @@
+main {
+    position: relative;
+        padding: 20px;
+    }
+
+#btn-back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+}
+
+.nav-link:after {
+	display: block;
+    padding: 0 auto;
+	position: relative; /*relative-выделение только текста, absolute-текста вместе с padding (всего элемента)*/
+	left: 0; /*изменить на right:0;, чтобы изменить направление подчёркивания */
+	width: 0%;/*задаём длинну линии до наведения курсора*/
+	height: 1px; /*задаём ширину линии*/
+	background-color: white; /*задаём цвет линии*/
+	content: "";
+	transition: width 0.3s ease-out; /*задаём время анимации*/
+}
+
+.nav-link:hover:after,
+.nav-link:focus:after {
+	width: 100%; /*устанавливаем значение 100% чтобы ссылка подчёркивалась полностью*/
+}
+.accordion {
+padding: 2px;
+}
+.accordion-button.collapsed {
+background-color: #f8f8f8 !important;
+}
+
+.accordion-button:focus {
+    outline: 0;
+    box-shadow: inset 0 -0.25px 0 rgba(0,0,0,.125);
+    /*border-bottom: 1px solid rgba(0,0,0,.125); */
+}
+
+.accordion-button:not(.collapsed) {
+color: black;
+border-bottom: none;
+}
+
+.accordion-button:not(.collapsed)::after {
+background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+
+}
+
+
+table, td, th {
+    border: solid 1px grey;
+    padding: 0.5rem;
+
+}
+
+.hide-table-border, .hide-table-border th, .hide-table-border td {
+    border-width: 0px;
+}
+
+p {
+margin-bottom:0rem;
+text-align: justify;
+}
+
+.btn-link {
+color: black;
+padding: 0rem 0rem 1rem 0rem;
+display:flex;
+}
+
+button.btn.btn-link.reveal{
+box-shadow: none;
+}

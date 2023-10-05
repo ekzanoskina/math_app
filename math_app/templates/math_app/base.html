@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" href="{% static 'math_app/css/bootstrap_css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link type="text/css" href="{% static 'math_app/css/styles.css' %}" rel="stylesheet"/>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% block head %}
+    {% endblock %}
+
+</head>
+<body>
+<!-- Блок меню -->
+<nav class="navbar sticky-top navbar-expand-sm bg-dark navbar-dark py-3 text-center">
+    <div class="container">
+        <a class="navbar-brand fs-5" href="{% url 'home' %}">Math app</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link fs-5" href="{% url 'home' %}">Каталог задач</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5" href="{% url 'variants' %}">Готовые варианты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5" href="{% url 'exam_filter' %}">Составить вариант</a>
+                </li>
+            </ul>
+            <a class="btn btn-warning fs-5" href="#">Войти</a>
+        </div>
+    </div>
+</nav>
+<!-- Конец блока меню -->
+<!-- Хлебные крошки -->
+{% block breadcrumbs %}
+{% endblock %}
+
+<!-- Блок контента -->
+{% block content %}
+{% endblock %}
+<!-- Конец блока контента -->
+<!-- Back to top button -->
+<button
+        id="btn-back-to-top"
+                type="button"
+        class="btn btn-secondary btn-floating btn-lg"
+        >
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+</svg>
+<i class="bi bi-arrow-up"></i>
+</button>
+<!-- Конец блока back to top button -->
+
+<script src="{% static 'math_app/js/jquery-3.7.0.JS' %}"></script>
+<script src="{% static 'math_app/js/bootstrap_js/bootstrap.min.js' %}"></script>
+<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+<script src="{% static 'math_app/js/index.js' %}"></script>
+
+
+</body>
+</html>

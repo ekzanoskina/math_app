@@ -1,0 +1,41 @@
+{% extends 'math_app/base.html' %}
+{% load custom_tags %}
+
+
+{% block head %}
+<title>{{title}}</title>
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <p><b>{{ forloop.counter }} {{test.exercise.subcategory|verbose_name:'category'}}
+                    {{test.exercise.subcategory.category.number}}
+                    id {{ test.pk }}</b></p>
+                {% if test.exercise.description %}
+                {{test.exercise.description|safe}}
+                <img width="100%" src="{{test.exercise.picture.url}}">
+                {% endif %}
+                <p>{{test.problem_text |safe }}</p>
+                <button class="btn btn-link reveal solution">Показать решение</button>
+                <div class="toggle_container">
+                    <div class="block"> {{test.solution |safe}}
+                        {% if test.get_answers %}
+                        <p> Ответ: {{test.get_answers |join:', ' }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if test.criteria %}
+                <button class="btn btn-link reveal criteria">Показать критерии</button>
+                <div class="toggle_container">
+                    <div class="block"> {{test.criteria |safe}}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'math_app/base.html' %}
+{% load custom_tags %}
+
+{% block head %}
+<title>{{title}}</title>
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% for ex in exercises %}
+                <!-- если есть общая часть -->
+                {% if ex.description %}
+                <div class="card">
+                    <div class="card-header">
+                        <b class="title">{{ forloop.counter }}. {{ex.subcategory.category | verbose_name:'number'}} {{ex.subcategory.category.number}} </b>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">{{ex.description | safe}}</div>
+                            <div class="col-lg-4"><img width="100%" src="{{ex.picture.url}}"/></div>
+                        </div>
+                    </div>
+                    <div class="card-footer btn text reveal tests text-start"> Показать задания</div>
+                    <div class="toggle_container col-12 col-lg-8">
+                        <div class="card-body">
+                            {% for test in ex.test_set.all %}
+                            {{forloop.counter}}. <a href="{{ test.get_absolute_url }}">id {{ test.pk }}</a>
+                            <p>{{test.problem_text |safe }}</p>
+                            <button class="btn btn-link reveal solution">Показать решение</button>
+                            <div class="toggle_container">
+                                <div class="block"> {{test.solution |safe}} Ответ: {{test.get_answers |join:', '}}</div>
+                            </div>
+                            {% if test.criteria %}
+                            <button class="btn btn-link reveal criteria">Показать критерии</button>
+                            <div class="toggle_container">
+                                <div class="block"> {{test.criteria |safe}}</div>
+                            </div>
+                            {% endif %}
+                            {% if not forloop.last %}<hr>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <!-- если нет общей части -->
+                {% else %}
+                <div class="col-12 col-lg-8">
+                    {{forloop.counter}}.
+                    {% for test in ex.test_set.all %}
+                    <a href="{{ test.get_absolute_url }}">id {{ test.pk }}</a>
+                    <p>{{test.problem_text |safe }}</p>
+                    <button class="btn btn-link reveal solution">Показать решение</button>
+                    <div class="toggle_container">
+                        <div class="block"> {{test.solution |safe}} Ответ: {{test.get_answers |join:', '}}</div>
+                    </div>
+                    {% if test.criteria %}
+                    <button class="btn btn-link reveal criteria">Показать критерии</button>
+                    <div class="toggle_container">
+                        <div class="block"> {{test.criteria |safe}}</div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% if not forloop.last %}<hr>{% endif %}
+                    {% endif %}
+                    <!-- конец условия про общую часть -->
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

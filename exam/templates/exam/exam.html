@@ -1,0 +1,44 @@
+{% extends 'math_app/base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+
+{% block content %}
+<main>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-8">
+                <h2 id="time" class="pointable btn-icon"></h2>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <div id="timer">00:00:00</div>
+                <h1>Ваш вариант</h1>
+                <br>
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="time" value="00:00:00">
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+
+                    {% if forloop.first and form.test.exercise.description %}
+                    {{form.test.exercise.description|safe}}
+                    <img width="100%" src="{{form.test.exercise.picture.url}}">
+                    {% endif %}
+                    <b>Задание №{{forloop.counter}}</b> Тип {{form.test.exercise.subcategory.category.number}} <a
+                        href="{{ form.test.get_absolute_url }}">id {{form.test.id}}</a>
+                    {{form.test.problem_text | safe}}
+                    {% if form.test.get_category_id < 20 %}
+                    {{form.as_p}}
+                    {% endif %}
+                    {% endfor %}
+                    <br>
+                    <br>
+                    <button id='submit' type="submit" name="action" value="Submit" class="btn btn-primary mb-2">
+                        Отправить ответ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

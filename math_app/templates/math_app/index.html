@@ -1,0 +1,85 @@
+{% extends 'math_app/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>{{title}}</title>
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-8">
+                <h2>Каталог заданий</h2>
+                <p>Вы можете составить свой вариант, воспользовавшись кнопкой "Составить вариант" в меню.</p>
+                <h4>Краткий ответ</h4>
+
+                {% for cat in categories %}
+                {% if cat.id < 20 %}
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panels-heading{{forloop.counter}}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+                                    type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false"
+                                    aria-controls="collapse{{forloop.counter}}">
+                                {{cat.number}}. {{cat.title}}
+                            </button>
+                        </h2>
+                        <div id="collapse{{forloop.counter}}"
+                             class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                             aria-labelledby="panels-heading{{forloop.counter}}">
+                            <div class="accordion-body">
+                                <div class="list-group-flush">
+                                    {% for subcat in cat.subcategory_set.all %}
+                                    <a href="{{ subcat.get_absolute_url }}" class="list-group-item">{{subcat.title}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                <h4>Развернутый ответ</h4>
+                {% for cat in categories %}
+                {% if cat.id > 19 %}
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panels-heading{{forloop.counter}}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+                                    type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false"
+                                    aria-controls="collapse{{forloop.counter}}">
+                                {{cat.number}}. {{cat.title}}
+                            </button>
+                        </h2>
+                        <div id="collapse{{forloop.counter}}"
+                             class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                             aria-labelledby="panels-heading{{forloop.counter}}">
+                            <div class="accordion-body">
+                                <div class="list-group-flush">
+                                    {% for subcat in cat.subcategory_set.all %}
+                                    <a href="{{ subcat.get_absolute_url }}" class="list-group-item">{{subcat.title}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+            <div class="col-12 col-md-4 col-md-offset-4">
+                <button class="btn btn-secondary active btn-lg" onclick="window.location='/exam/filter';">Составить
+                    вариант
+                </button>
+            </div>
+        </div>
+
+</main>
+{% endblock %}
+
+
