@@ -16,4 +16,4 @@ class Variant(models.Model):
         return str(self.pk)
 
     def get_absolute_url(self):
-        return reverse('exam', kwargs={'variant_id': self.pk})
+        return reverse('test_exam', kwargs={'variant_id': self.pk})
