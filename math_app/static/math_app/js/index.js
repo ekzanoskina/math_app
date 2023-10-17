@@ -204,8 +204,8 @@ function num_word(value, words){
 //  (по своему варианту)
   $('#your_variant_exam').on('click', resetTimer)
 //  сохранение значения таймера в hidden input
-  $("form").submit(sendTime)
-
+//  $("form").submit(sendTime)
+   $("#stop_timer").click(sendTime)
 // конец таймера
 
 // выпадающие списки для заданий, решений и критериев

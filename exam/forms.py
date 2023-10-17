@@ -15,7 +15,7 @@ CHOICE_LIST = [
 
 class QuestionForm(forms.Form):
     answers = forms.ChoiceField(choices=CHOICE_LIST, widget=forms.RadioSelect(),
-                                label="Укажите набранное количество баллов:", required=False)
+                                label="Укажите набранное количество баллов:", required=False, initial='')
 
     def __init__(self, test_part2, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
@@ -32,14 +32,14 @@ class EssayForm(forms.Form):
 
 class BaseExamFormSet(BaseFormSet):
     def get_form_kwargs(self, index):
-        kwargs = super(BaseExamFormSet, self).get_form_kwargs(index)
+        kwargs = super().get_form_kwargs(index)
         test = kwargs['tests'][index]
         return {'test': test}
 
 
 class BaseExam2FormSet(BaseFormSet):
     def get_form_kwargs(self, index):
-        kwargs = super().get_form_kwargs(index)
+        kwargs = super(BaseExam2FormSet, self).get_form_kwargs(index)
         test_part2 = kwargs['tests_part2'][index]
         # if index < len(kwargs['tests_part2']):
         #     test_part2 = kwargs['tests_part2'][index]
@@ -71,7 +71,6 @@ class BaseFilterFormSet(BaseFormSet):
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         cat = kwargs['categories'][index]
-        print(index)
         return {'category': cat}
 
     def full_clean(self):

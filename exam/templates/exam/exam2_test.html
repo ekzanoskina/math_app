@@ -15,8 +15,10 @@
                     {{wizard.management_form}}
                     <table>
                         {% for form in wizard.form %}
+                        {{wizard.form.management_form}}
+
 <!--                        {% if form.test_part2 %}-->
-                        <b>Задание №{{forloop.counter}}</b> Тип {{form.test.exercise.subcategory.category.number}} <a
+                        <b>Задание №{{forloop.counter}}</b> Тип {{form.test_part2.exercise.subcategory.category.number}} <a
                             href="{{ form.test.get_absolute_url }}">id {{form.test_part2.id}}</a>
                         {{form.test.problem_text | safe}}
                         <b>Решение:</b>
