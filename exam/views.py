@@ -8,6 +8,7 @@ from .models import *
 import random
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import FormView, ListView
+from django.core import serializers
 
 
 def show_progress(request, variant_id=None):
@@ -101,6 +102,7 @@ def take_exam(request, variant_id=None):
 def exam_filter(request):
     categories = Category.objects.all()
     num_cat = categories.count()
+    exercises_dict = []
     lst = []
     FilterFormSet = formset_factory(form=FilterForm, formset=BaseFilterFormSet, extra=num_cat, max_num=num_cat, min_num=1, validate_min=True)
     if request.method == 'POST':
@@ -115,7 +117,6 @@ def exam_filter(request):
                         exercises = Exercise.objects.filter(subcategory__in=subcategory).order_by('?')[:cat_quantity]
                         for ex in exercises:
                             lst.append(ex.id)
-                    print(exercises)
             request.session['exercises_list'] = lst
             return redirect('exam')
 
