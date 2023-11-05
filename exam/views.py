@@ -1,4 +1,3 @@
-from django.contrib.messages.storage import session
 from django.forms import formset_factory
 from django.db.models import Q
 from django.http import HttpResponse, request
@@ -11,7 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.generic import FormView, ListView
 
 
-def show_progress(request, variant_id):
+def show_progress(request, variant_id=None):
     if variant_id:
         variant = Variant.objects.get(pk=variant_id)
         tests_part1 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__lt=20))
@@ -41,7 +40,7 @@ def show_progress(request, variant_id):
             mark = '5'
     return render(request, 'exam/progress.html', {'variant_id': variant_id, 'tests': tests, 'tests_part1': tests_part1, 'tests_part2': tests_part2, 'correct_answers': correct_answers, 'answers': answers, 'time': time, 'max_result': max_result, 'result': result, 'geometry_result': geometry_result, 'mark': mark})
 
-def take_exam2(request, variant_id):
+def take_exam2(request, variant_id=None):
     if variant_id:
         variant = Variant.objects.get(pk=variant_id)
         tests = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__gt=19)).order_by('exercise__subcategory__category__id')
@@ -61,12 +60,12 @@ def take_exam2(request, variant_id):
                 dict_answers[test.id] = answer
             request.session['dict_part2_points'] = dict_part2_points
 
-            return redirect('progress', variant_id = variant_id)
+            return redirect('progress')
     else:
         formset = QuestionFormSet(form_kwargs={'tests': list(tests)})
         return render(request, 'exam/exam2.html', {'tests': tests, 'formset': formset})
 
-def take_exam(request, variant_id):
+def take_exam(request, variant_id=None):
     if variant_id:
         variant = Variant.objects.get(pk=variant_id)
         tests = Test.objects.filter(exercise__in=variant.exercise.all()).order_by('exercise__subcategory__category__id')
@@ -89,10 +88,10 @@ def take_exam(request, variant_id):
                 request.session['dict_correct_answers'] = dict_correct_answers
                 request.session['dict_answers'] = dict_answers
             if tests.filter(exercise__subcategory__category__id__gt=19).count() > 0:
-                return redirect('exam2', variant_id=variant_id)
+                return redirect('exam2')
             else:
                 request.session['dict_part2_points'] = {}
-                return redirect('progress', variant_id=variant_id)
+                return redirect('progress')
     else:
         formset = ExamFormSet(form_kwargs={'tests': list(tests)})
     return render(request, 'exam/exam.html', {'formset': formset})
@@ -116,13 +115,16 @@ def exam_filter(request):
                         exercises = Exercise.objects.filter(subcategory__in=subcategory).order_by('?')[:cat_quantity]
                         for ex in exercises:
                             lst.append(ex.id)
+                    print(exercises)
             request.session['exercises_list'] = lst
-            return redirect('exam', variant_id=0)
+            return redirect('exam')
 
     else:
         formset = FilterFormSet(form_kwargs={'categories': list(categories), })
     return render(request, 'exam/exam_filter.html', {'formset': formset})
 
+
+    
 class ShowVariant(ListView):
     model = Variant
     template_name = 'exam/variants.html'
