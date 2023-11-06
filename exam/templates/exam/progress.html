@@ -42,6 +42,7 @@
       <td>{{test.id}}</td>
       <td>{{test.exercise.subcategory.category.number}}</td>
         {% with answer=answers|get_value:test %}
+        {{answer}}
         {% if answer in test.get_answers %}
       <td class="green">{{answer}}</td>
         {% else %}

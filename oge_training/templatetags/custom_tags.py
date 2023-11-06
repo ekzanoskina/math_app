@@ -11,5 +11,5 @@ def verbose_name(the_object, the_field):
 
 @register.filter
 def get_value(dictionary, key):
-    return dictionary.get(str(key.id))
+    return dictionary.get(key.id)
 
