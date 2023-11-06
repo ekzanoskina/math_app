@@ -9,17 +9,22 @@ import random
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import FormView, ListView
 from django.core import serializers
+from django.core.cache import cache
+from collections import OrderedDict
 
 
 def show_progress(request, variant_id=None):
-    if variant_id:
-        variant = Variant.objects.get(pk=variant_id)
-        tests_part1 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__lt=20))
-        tests_part2 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__gt=19))
+    # if variant_id:
+    #     variant = Variant.objects.get(pk=variant_id)
+    #     tests_part1 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__lt=20))
+    #     tests_part2 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__gt=19))
+    #
+    # else:
+    #     tests_part1 = Test.objects.filter(Q(exercise__id__in=request.session['exercises_list']) & Q(exercise__subcategory__category__id__lt=20))
+    #     tests_part2 = Test.objects.filter(Q(exercise__id__in=request.session['exercises_list']) & Q(exercise__subcategory__category__id__gt=19))
 
-    else:
-        tests_part1 = Test.objects.filter(Q(exercise__id__in=request.session['exercises_list']) & Q(exercise__subcategory__category__id__lt=20))
-        tests_part2 = Test.objects.filter(Q(exercise__id__in=request.session['exercises_list']) & Q(exercise__subcategory__category__id__gt=19))
+    tests_part1 = cache.get('tests_part1')
+    tests_part2 = cache.get('tests_part2')
     tests = tests_part1 | tests_part2
     answers = request.session.get('dict_answers')
     correct_answers = request.session.get('dict_correct_answers')
@@ -69,14 +74,18 @@ def take_exam2(request, variant_id=None):
 def take_exam(request, variant_id=None):
     if variant_id:
         variant = Variant.objects.get(pk=variant_id)
-        tests = Test.objects.filter(exercise__in=variant.exercise.all()).order_by('exercise__subcategory__category__id')
+        tests_part1 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__lt=20)).order_by('exercise__subcategory__category__id')
+        tests_part2 = Test.objects.filter(Q(exercise__in=variant.exercise.all()) & Q(exercise__subcategory__category__id__gt=19)).order_by('exercise__subcategory__category__id')
+        cache.set('tests_part1', tests_part1)
+        cache.set('tests_part2', tests_part2)
     else:
-        tests = Test.objects.filter(exercise__in=request.session.get('exercises_list')).order_by('exercise__subcategory__category__id')
-    num_tests = tests.count()
+        tests_part1 = cache.get('tests_part1')
+        tests_part2 = cache.get('tests_part2')
+    num_tests = tests_part1.count()
     ExamFormSet = formset_factory(form=EssayForm, formset=BaseExamFormSet, extra=num_tests)
     if request.method == 'POST':
         request.session['time'] = request.POST.get('time')
-        formset = ExamFormSet(request.POST, form_kwargs={'tests': list(tests)})
+        formset = ExamFormSet(request.POST, form_kwargs={'tests': list(tests_part1)})
         dict_correct_answers = {}
         dict_answers = {}
         if formset.is_valid():
@@ -88,25 +97,26 @@ def take_exam(request, variant_id=None):
                     dict_correct_answers[test.id] = answer
                 request.session['dict_correct_answers'] = dict_correct_answers
                 request.session['dict_answers'] = dict_answers
-            if tests.filter(exercise__subcategory__category__id__gt=19).count() > 0:
+            if len(tests_part2) > 0:
                 return redirect('exam2')
             else:
-                request.session['dict_part2_points'] = {}
                 return redirect('progress')
     else:
-        formset = ExamFormSet(form_kwargs={'tests': list(tests)})
+        formset = ExamFormSet(form_kwargs={'tests': list(tests_part1)})
     return render(request, 'exam/exam.html', {'formset': formset})
 
 
 #
 def exam_filter(request):
     categories = Category.objects.all()
-    num_cat = categories.count()
-    exercises_dict = []
+    num_cat = len(categories)
+    dict_categories = dict()
+    for category in categories:
+        dict_categories[category] = category.subcategory_set.all()
     lst = []
     FilterFormSet = formset_factory(form=FilterForm, formset=BaseFilterFormSet, extra=num_cat, max_num=num_cat, min_num=1, validate_min=True)
     if request.method == 'POST':
-        formset = FilterFormSet(request.POST, form_kwargs={'categories': categories})
+        formset = FilterFormSet(request.POST, form_kwargs={'categories': categories, 'dict_categories': dict_categories})
 
         if formset.is_valid():
             for form in formset:
@@ -117,11 +127,18 @@ def exam_filter(request):
                         exercises = Exercise.objects.filter(subcategory__in=subcategory).order_by('?')[:cat_quantity]
                         for ex in exercises:
                             lst.append(ex.id)
+            tests_part1 = Test.objects.filter(Q(exercise__in=lst) & Q(exercise__subcategory__category__id__lt=20)).order_by(
+                'exercise__subcategory__category__id')
+            tests_part2 = Test.objects.filter(Q(exercise__in=lst) & Q(exercise__subcategory__category__id__gt=19)).order_by(
+                'exercise__subcategory__category__id')
+            cache.set('tests_part1', tests_part1)
+            cache.set('tests_part2', tests_part2)
+
             request.session['exercises_list'] = lst
             return redirect('exam')
 
     else:
-        formset = FilterFormSet(form_kwargs={'categories': list(categories), })
+        formset = FilterFormSet(form_kwargs={'categories': categories,'dict_categories': dict_categories })
     return render(request, 'exam/exam_filter.html', {'formset': formset})
 
 
