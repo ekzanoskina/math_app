@@ -13,3 +13,6 @@ def verbose_name(the_object, the_field):
 def get_value(dictionary, key):
     return dictionary.get(str(key.id))
 
+@register.filter
+def divisibleby(value, divisor):
+    return value % divisor == 0
