@@ -41,7 +41,7 @@
                               <h4>Краткий ответ</h4>
                     {% for form in formset %}
                               {% if form.category.id < 20 %}
-                    <div class="accordion">
+                    <div class="accordion short-answer-questions">
                         <div class="accordion-item">
                             <h2 class="accordion-header input-group flex-nowrap col-2" id="panels-heading">
                                 <div class="number-input">
@@ -78,7 +78,7 @@
             <h4>Развернутый ответ</h4>
                               {% for form in formset %}
                               {% if form.category.id > 19 %}
-                        <div class="accordion">
+                        <div class="accordion detailed-answer-questions">
                         <div class="accordion-item">
                             <h2 class="accordion-header input-group flex-nowrap col-2" id="panels-heading">
                                 <div class="number-input">
@@ -127,6 +127,13 @@
                 <span>Составить вариант</span>
                     <br>
                     <span id='sum'></span>
+                </button>
+
+                        <button class="btn btn-secondary active btn-lg" >
+                <span>Краткий ответ</span> <input id="short-answer" type="checkbox" value="">
+                </button>
+                  <button class="btn btn-secondary active btn-lg" >
+                <span>Развернутый ответ</span> <input id="detailed-answer" type="checkbox" value="">
                 </button>
 </div>
 

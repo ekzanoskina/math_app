@@ -42,11 +42,16 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'ckeditor', # CKEditor config
     'ckeditor_uploader',
+    "crispy_forms",
+    "crispy_bootstrap5",
     'nested_admin',
     'math_app',
     'exam',
 
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

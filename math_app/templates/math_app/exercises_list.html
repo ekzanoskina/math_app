@@ -53,7 +53,7 @@
                     <p>{{test.problem_text |safe }}</p>
                     <button class="btn btn-link reveal solution">Показать решение</button>
                     <div class="toggle_container">
-                        <div class="block"> {{test.solution |safe}} Ответ: {{test.get_answers |join:', '}}</div>
+                        <div class="block"> {{test.solution |safe}} </div>
                     </div>
                     {% if test.criteria %}
                     <button class="btn btn-link reveal criteria">Показать критерии</button>

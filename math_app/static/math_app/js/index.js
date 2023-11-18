@@ -9,10 +9,53 @@ $(':input[type="number"]').on('keypress', function (e) {
     }
 });
 
+//Checkboxes, general variables
+
+var short_ans_qs = $('.accordion.short-answer-questions')
+var detailed_ans_qs = $('.accordion.detailed-answer-questions')
+var $short_answer = $('#short-answer')
+var $detailed_answer = $('#detailed-answer')
+
+function select_all_qs_in_part(part, questions){
+part.on('click', function() {
+  if ($(this).is(':checked')) {
+      questions.find('.check').prop('checked', true);
+      questions.find('input[type="number"]').val(1);
+      questions.find('.check-all').prop('checked', true);
+  } else {
+      questions.find('.check').prop('checked', false);
+      questions.find('input[type="number"]').val(0);
+      questions.find('.check-all').prop('checked', false);
+  };
+  calculateSum();
+  });
+
+questions.on('change click keyup input paste blur', function(){
+
+
+  var $inputs = questions.find('input[type="number"]');
+  var allValuesGreaterThanZero = true;
+
+  $inputs.each(function() {
+    var value = parseInt($(this).val());
+    if (isNaN(value) || value <= 0) {
+      allValuesGreaterThanZero = false;
+      return false; // Exit the loop early if any value is not greater than zero
+    }
+  });
+
+  part.prop('checked', allValuesGreaterThanZero);
+})
+}
+
+
+select_all_qs_in_part($short_answer, short_ans_qs)
+select_all_qs_in_part($detailed_answer, detailed_ans_qs)
+
 // checkboxes
-    $(function(){
-        $(document).on('click','input[type=number]',function(){ this.select(); });
-    });
+
+
+$('input[type=number]').on('click',function(){ this.select(); });
 
 $('.check-all').parents('.accordion-item').find('.number-input').on('propertychange change click keyup input paste blur', function(){
 
@@ -26,7 +69,6 @@ $('.check-all').parents('.accordion-item').find('.number-input').on('propertycha
     })
     };
     if (!value ) {
-
     check_all.prop('checked', false);
     $(this).parents('.accordion-item').find('.check').each(function() {
       this.checked = false;

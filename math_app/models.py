@@ -77,6 +77,6 @@ class Test(models.Model):
 class Answer(models.Model):
     exercise = models.ForeignKey(Test, on_delete=models.CASCADE, verbose_name='Задание')
     answer = models.CharField(verbose_name='Ответ', max_length=200, db_index=True, null=True, blank=True)
-
+    # answer = RichTextUploadingField(verbose_name='Ответ', blank=True, null=True)
     def __str__(self):
         return self.answer

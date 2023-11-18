@@ -19,17 +19,22 @@
                     <input type="hidden" name="time" value="00:00:00">
                     {{ formset.management_form }}
                     {% for form in formset %}
+                                {% if not forloop.first %}<hr>{% endif %}
                     {% if forloop.first or forloop.counter|divisibleby:6 %}
                     {% if form.test.exercise.description %}
                     {{form.test.exercise.description|safe}}
-                    <img width="100%" src="{{form.test.exercise.picture.url}}">
+                    <div class="col-xs-12 col-lg-6">
+                     <p><img width="100%" alt="image"
+
+                         src="{{form.test.exercise.picture.url}}"></p>
+                      </div>
                     {% endif %}
                     {% endif %}
                     <b>Задание №{{forloop.counter}}</b> Тип {{form.test.get_category_number}} <a
                         href="{{ form.test.get_absolute_url }}">id {{form.test.id}}</a>
                     {{form.test.problem_text | safe}}
 
-                    {% if form.test.get_category_id < 20 %}
+                    {% if not form.test.part_2 %}
                     {{form.as_p}}
                     {% endif %}
                     {% endfor %}

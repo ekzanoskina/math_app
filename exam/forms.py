@@ -1,3 +1,6 @@
+from crispy_forms.bootstrap import InlineRadios
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Submit
 from django import forms
 from django.forms import BaseFormSet, ModelMultipleChoiceField, MultipleChoiceField, ChoiceField
 from django.forms import BaseModelFormSet
@@ -5,6 +8,9 @@ from django.forms.widgets import Textarea
 from math_app.models import *
 from .models import *
 from django.forms.widgets import RadioSelect
+
+from django.utils.safestring import mark_safe
+
 
 CHOICE_LIST = [
     ("0", 0),
@@ -16,6 +22,12 @@ class QuestionForm(forms.Form):
     def __init__(self, test, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
         self.test = test
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(InlineRadios('answers')),
+        )
+        self.helper.label_class = "fw-bold"
+        self.helper.form_tag = False
 
 
 class EssayForm(forms.Form):

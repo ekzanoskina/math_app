@@ -78,7 +78,12 @@ transform: translate(-50%, -50%) rotate(90deg);
     text-align: center;
     }
 
-td.green {
+td.alert {
+border-color: grey;
+border-radius: 0rem;
+}
+
+td.success-answer {
     background-color: green
 }
 td.red {
