@@ -3,6 +3,7 @@ main {
         padding: 20px;
     }
 
+
 #btn-back-to-top {
   position: fixed;
   bottom: 20px;
@@ -64,6 +65,21 @@ span#MathJax-Element-1-Frame {
     font-size: 140%!important;
 };
 
+input[type='checkbox']{ height: 0; width: 0; display:none }
+
+/* Checkboxes */
+input[type='checkbox'] {
+    border: 1px solid #fff;
+    font-size: 24pt;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 0.25em;
+    margin: 0.5px 0.5px 0.5px 0.5px;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+}
 
 
 p {
