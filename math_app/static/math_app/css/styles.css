@@ -95,3 +95,7 @@ display:flex;
 button.btn.btn-link.reveal{
 box-shadow: none;
 }
+
+#btn-back-to-top {
+z-index: 99999
+}
