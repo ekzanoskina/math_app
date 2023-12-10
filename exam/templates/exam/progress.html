@@ -10,21 +10,20 @@
 <main>
   <div class="container">
     <div class="row" >
-        <div class="col-xs-12 col-sm-8">
+        <div class="col-xs-12 col-lg-8">
             {% if variant_id %}
             <p> Вариант №: {{variant_id}}</p>
-            <p> Оценка: {{mark}}  </p>
+
             {% endif %}
-            {% with count1=tests_part1|length %}
-            {% with count2=tests_part2|length %}
-            Заданий с кратким ответом: {{count1}}, с развернутым ответом: {{count2}} Максимальный балл: {{count1}} + {% widthratio count2 1 2 %}  = {{max_result}}
-            {% endwith %}
-            {% endwith %}
+            <p> Оценка: {{mark}}  </p>
+
+            Заданий с кратким ответом: {{tests_part1_count}}, с развернутым ответом: {{tests_part2_count}} Максимальный балл: {{tests_part1_count}} + {% widthratio tests_part2_count 1 2 %}  = {{max_result}}
+
             <p> Время выполнения: {{time}} </p>
             <p> Набрано баллов: {{result}} </p>
             <p> Набрано баллов по геметрии: {{geometry_result}} </p>
 
-        {% if tests_part1 %}
+        {% if tests_part1_count %}
     <h2>Тестовая часть</h2>
     <table>
     <tr>
@@ -36,26 +35,27 @@
     </tr>
         </thead>
   <tbody>
-  {% for test in tests_part1 %}
+  {% for test in tests %}
+  {% if not test.part_2 %}
     <tr>
       <td>{{ forloop.counter }}</td>
-      <td>{{test.id}}</td>
+      <td><a href="{{ test.get_absolute_url }}">{{ test.pk }}</a></td>
       <td>{{test.exercise.subcategory.category.number}}</td>
         {% with answer=answers|get_value:test %}
-        {{answer}}
         {% if answer in test.get_answers %}
-      <td class="green">{{answer}}</td>
+      <td class="alert alert-success">{{answer}}</td>
         {% else %}
-      <td class="red">{{answer|default_if_none:''}}</td>
+      <td class="alert alert-danger">{{answer|default_if_none:''}}</td>
         {% endif %}
         {% endwith %}
-      <td>{{ test.get_answers|join:'; ' }}</td>
+      <td>{{ test.get_answers|join:'; '|safe }}</td>
     </tr>
+  {% endif %}
   {% endfor %}
 </tbody>
 </table>
         {% endif %}
-        {% if tests_part2 %}
+        {% if tests_part2_count %}
         <h2>Часть с развернутым ответом</h2>
             <table>
     <tr>
@@ -67,35 +67,76 @@
     </tr>
         </thead>
   <tbody>
-  {% for test in tests_part2 %}
+  {% for test in tests %}
+  {% if test.part_2 %}
     <tr>
       <td>{{ forloop.counter }}</td>
-      <td>{{test.id}}</td>
+      <td><a href="{{ test.get_absolute_url }}" >{{ test.pk }}</a></td>
       <td>{{test.exercise.subcategory.category.number}}</td>
         {% with answer=answers|get_value:test %}
         {% if answer == '2' %}
-      <td class="green">{{answer}}</td>
+      <td class='alert alert-success'>{{answer}}</td>
         {% elif answer == '1' %}
-      <td class="yellow">{{answer}}</td>
+      <td class="alert alert-warning">{{answer}}</td>
         {% else %}
-      <td class="red">{{answer|default_if_none:''}}</td>
+      <td class="alert alert-danger">{{answer|default_if_none:''|safe}}</td>
         {% endif %}
         {% endwith %}
       <td>2</td>
     </tr>
+  {% endif %}
   {% endfor %}
 </tbody>
 </table>
         {% endif %}
             <br>
-            {% if tests_part1 %}
+
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+  </symbol>
+  <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+  </symbol>
+  <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </symbol>
+</svg>
+
+            {% if tests_part1_count %}
     <h2>Решения</h2>
-    {% for test in tests_part1 %}
-    <b>Задание № {{ forloop.counter }} № {{test.id}} Тип {{test.exercise.subcategory.category.number}}</b>
+    {% for test in tests %}
+
+            {% if not test.part_2 %}
+            {% if not forloop.first %}<hr>{% endif %}
+                    {% with answer=answers|get_value:test %}
+        {% if answer in test.get_answers %}
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+  <div>
+    <b>Задание № {{ forloop.counter }}
+         <a href="{{ test.get_absolute_url }}" class="alert-link">id#{{ test.pk }}</a>
+        Тип {{test.exercise.subcategory.category.number}}</b> (решено верно)
+  </div>
+</div>
+        {% else %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+  <div>
+    <b>Задание {{ forloop.counter }}
+        <a href="{{ test.get_absolute_url }}" class="alert-link">id#{{ test.pk }}</a>
+        Тип {{test.exercise.subcategory.category.number}}</b> (решено неверно или не решено)
+  </div>
+</div>
+        {% endif %}
+        {% endwith %}
+
     <p>{{test.problem_text |safe}}</p>
     <p><b>Ваш ответ: </b>{{answers | get_value:test | default_if_none:'нет ответа'}}</p>
-    <p><b>Правильный ответ: </b> {{ test.get_answers|join:'; '}}</p>
+    <p><b>Правильный ответ: </b> {{ test.get_answers|join:'; '|safe}}</p>
     <p><b>Решение: </b>{{test.solution |safe}}</p>
+
+            {% endif %}
     {% endfor %}
             {% endif %}
         </div>

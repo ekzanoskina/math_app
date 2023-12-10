@@ -1,5 +1,6 @@
 {% extends 'math_app/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
@@ -12,10 +13,11 @@
                 <h1>Ваш вариант</h1>
 
                 <br>
-                <form action="#" method="POST">
+                <form class=action="#" method="POST">
                     {% csrf_token %}
                     {{ formset.management_form }}
                     {% for form in formset %}
+                                {% if not forloop.first %}<hr>{% endif %}
                     <b>Задание №{{forloop.counter}}</b> Тип {{form.test.exercise.subcategory.category.number}} <a
                         href="{{ form.test.get_absolute_url }}">id {{form.test.id}}</a>
                     {{form.test.problem_text | safe}}
@@ -23,8 +25,11 @@
                     <p>{{form.test.solution | safe}} </p>
                     <b>Критерии:</b>
                     <p>{{form.test.criteria | safe}} </p>
-                    {{form.as_p}}
-                    {% endfor %}
+        {% crispy form %}
+
+
+{% endfor %}
+
                     <br>
                     <br>
                     <button id='submit' type="submit" name="action" value="Submit" class="btn btn-primary mb-2">

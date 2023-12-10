@@ -31,6 +31,7 @@ class Subcategory(models.Model):
         return reverse('subcategory', kwargs={'subcat_slug': self.slug})
 
 class Exercise(models.Model):
+
     subcategory = models.ForeignKey(Subcategory, related_name='subcategory', on_delete=models.CASCADE,
                                     verbose_name='Вид')
     description = RichTextUploadingField(blank=True, null=True)
@@ -52,7 +53,7 @@ class Test(models.Model):
     # part2 = models.BooleanField(default=False, blank=True)
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('exercise__subcategory__category__id',)
 
     def __str__(self):
         return str(self.pk)
@@ -70,9 +71,12 @@ class Test(models.Model):
     def get_category_id(self):
         return self.exercise.subcategory.category.id
 
+    def get_category_number(self):
+        return self.exercise.subcategory.category.number
+
 class Answer(models.Model):
     exercise = models.ForeignKey(Test, on_delete=models.CASCADE, verbose_name='Задание')
     answer = models.CharField(verbose_name='Ответ', max_length=200, db_index=True, null=True, blank=True)
-
+    # answer = RichTextUploadingField(verbose_name='Ответ', blank=True, null=True)
     def __str__(self):
         return self.answer

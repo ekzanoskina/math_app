@@ -11,6 +11,8 @@ class Home(ListView):
     template_name = 'math_app/index.html'
     context_object_name = 'categories'
     extra_context = {'title': 'Главная страница'}
+    def get_queryset(self):
+        return Category.objects.all().prefetch_related('subcategory_set')
 
 class ShowSubcategory(ListView):
     model = Exercise

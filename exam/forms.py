@@ -1,25 +1,34 @@
+
+from crispy_forms.bootstrap import InlineRadios
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Submit
 from django import forms
-from django.forms import BaseFormSet, ModelMultipleChoiceField
+from django.forms import BaseFormSet, ModelMultipleChoiceField, MultipleChoiceField, ChoiceField
 from django.forms import BaseModelFormSet
 from django.forms.widgets import Textarea
 from math_app.models import *
 from .models import *
 from django.forms.widgets import RadioSelect
 
+from django.utils.safestring import mark_safe
+
+
 CHOICE_LIST = [
     ("0", 0),
     ("1", 1),
     ("2", 2),
 ]
-
-
 class QuestionForm(forms.Form):
-    answers = forms.ChoiceField(choices=CHOICE_LIST, widget=forms.RadioSelect(),
-                                label="Укажите набранное количество баллов:", required=False, initial='')
-
-    def __init__(self, test_part2, *args, **kwargs):
+    answers = forms.ChoiceField(choices=CHOICE_LIST, widget=forms.RadioSelect(), label="Укажите набранное количество баллов:", required=False)
+    def __init__(self, test, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
-        self.test_part2 = test_part2
+        self.test = test
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(InlineRadios('answers')),
+        )
+        self.helper.label_class = "fw-bold"
+        self.helper.form_tag = False
 
 
 class EssayForm(forms.Form):
@@ -28,8 +37,6 @@ class EssayForm(forms.Form):
         self.test = test
         self.fields["answers"] = forms.CharField(required=False, initial='')
         self.fields['answers'].label = 'Ответ'
-
-
 class BaseExamFormSet(BaseFormSet):
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
@@ -37,42 +44,33 @@ class BaseExamFormSet(BaseFormSet):
         return {'test': test}
 
 
-class BaseExam2FormSet(BaseFormSet):
-    def get_form_kwargs(self, index):
-        kwargs = super(BaseExam2FormSet, self).get_form_kwargs(index)
-        test_part2 = kwargs['tests_part2'][index]
-        # if index < len(kwargs['tests_part2']):
-        #     test_part2 = kwargs['tests_part2'][index]
-        #     return {'test_part2': test_part2}
-        return {'test_part2': test_part2}
-
-class MyModelMultipleChoiceField(ModelMultipleChoiceField):
-    def label_from_instance(self, obj):
-        return f"{obj.title}"
 
 
+# class MyModelMultipleChoiceField(ModelMultipleChoiceField):
+#     def label_from_instance(self, obj):
+#         return f"{obj.title}"
 class FilterForm(forms.Form):
-    cat_quantity = forms.IntegerField(min_value=0,
-                                      widget=forms.NumberInput(attrs={'placeholder': 0, 'class': "cat_quantity"}),
-                                      required=False)
-    subcategory = MyModelMultipleChoiceField(queryset=None,
-                                             widget=forms.CheckboxSelectMultiple(attrs={'class': "check"}),
-                                             required=False)
+    cat_quantity = forms.IntegerField(min_value=0, widget=forms.NumberInput(attrs={'placeholder':0, 'class':"cat_quantity"}), required = False)
+    subcategory = MultipleChoiceField(choices=(), widget=forms.CheckboxSelectMultiple(attrs={'class':"check"}), required = False)
 
     def __init__(self, category, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.category = category
         self.fields['cat_quantity'].label = f"{category.number}. {category.title}"
         self.fields['subcategory'].label = ''
-        self.fields['subcategory'].queryset = Subcategory.objects.filter(category__title=category.title)
-
+        subcategories = category.subcategory_set.all()
+        foo_list = []
+        for subcat in subcategories:
+            foo_list.append((subcat.id, subcat.title), )
+        self.fields['subcategory'].choices = foo_list
 
 class BaseFilterFormSet(BaseFormSet):
+
+
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         cat = kwargs['categories'][index]
         return {'category': cat}
-
     def full_clean(self):
         super(BaseFilterFormSet, self).full_clean()
 

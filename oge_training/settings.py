@@ -39,14 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'ckeditor', # CKEditor config
     'ckeditor_uploader',
+    "crispy_forms",
+    "crispy_bootstrap5",
     'nested_admin',
     'math_app',
     'exam',
-    'formtools',
 
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -56,9 +61,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'oge_training.urls'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 TEMPLATES = [
     {
@@ -196,8 +206,10 @@ CKEDITOR_CONFIGS = {
             'image:advanced',
             'image:Link',
             'link:upload',
-            # 'table:advanced',
-            # 'tableProperties:advanced'
+            'table:advanced',
+            'tableProperties:advanced'
+
+            ,
         ]),
         'linkShowTargetTab': False,
         'linkShowAdvancedTab': False,
@@ -225,12 +237,9 @@ CKEDITOR_CONFIGS = {
             'image2',  # Loads new and better image dialog
             'embed',  # Used for embedding media (YouTube/Slideshare etc)
             'tableresize',  # Used to allow resizing of columns in tables
-            'dialogadvtab',
-            'ckeditor_wiris'
 
         ]),
     }
 
 }
-
 

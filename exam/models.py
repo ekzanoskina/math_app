@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals
 from django.db import models
 from django.urls import reverse
@@ -16,4 +17,4 @@ class Variant(models.Model):
         return str(self.pk)
 
     def get_absolute_url(self):
-        return reverse('test_exam', kwargs={'variant_id': self.pk})
+        return reverse('exam', kwargs={'variant_id': self.pk})
