@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'math_app',
     'exam',
+    "users",
 
 ]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

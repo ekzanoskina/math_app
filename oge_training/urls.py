@@ -25,6 +25,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('math_app/', include('math_app.urls')),
     path('exam/', include('exam.urls')),
+    path('users/', include('users.urls', namespace="users")),
 ]
 
 if settings.DEBUG:
