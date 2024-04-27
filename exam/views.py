@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import formset_factory, BooleanField
 from django.db.models import Q, Value
 from django.http import HttpResponse, request
@@ -136,7 +137,7 @@ def exam_filter(request):
         formset = FilterFormSet(form_kwargs={'categories': categories})
     return render(request, 'exam/exam_filter.html', {'formset': formset})
     
-class ShowVariant(ListView):
+class ShowVariant(LoginRequiredMixin, ListView):
     model = Variant
     template_name = 'exam/variants.html'
     context_object_name = 'variants'
