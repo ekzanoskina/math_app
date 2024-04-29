@@ -34,6 +34,7 @@
                     <a class="nav-link fs-5" href="{% url 'exam_filter' %}">Составить вариант</a>
                 </li>
             </ul>
+            <a href="{% url 'users:profile' %}">{{user.username}}</a> |
             <a class="btn btn-warning fs-5" href="{% url 'users:login' %}">Войти</a>
         </div>
     </div>

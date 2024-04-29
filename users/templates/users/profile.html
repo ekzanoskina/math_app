@@ -1,0 +1,29 @@
+{% extends 'math_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+  <div class="container">
+    <div class="row">
+              <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+
+<h1>Профиль</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-error">{{ form.non_field_errors }}</div>
+    {% for f in form %}
+    <p ><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
+    <div class="form-error">{{ f.errors }}</div>
+    {% endfor %}
+ 
+    <p ><button type="submit">Сохранить</button></p>
+</form>
+            </div>
+        </div>
+
+  </div>
+
+</body>
+ 
+{% endblock %}
