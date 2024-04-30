@@ -18,3 +18,17 @@ class Variant(models.Model):
 
     def get_absolute_url(self):
         return reverse('exam', kwargs={'variant_id': self.pk})
+
+# class ExamAttempt(models.Model):
+#     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exam_attempts')
+#     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+#     score = models.FloatField()  # Может быть вычисляемым полем, если логика оценки сложная
+#     time_spent = models.DurationField()
+#     completed_date = models.DateTimeField()
+#
+# class QuestionAttempt(models.Model):
+#     exam_attempt = models.ForeignKey(ExamAttempt, on_delete=models.CASCADE, related_name='question_attempts')
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+#     answer = models.CharField(max_length=255)  # или любой другой формат, в зависимости от типа вопроса
+#     correct = models.BooleanField()
+#     time_spent = models.DurationField()
