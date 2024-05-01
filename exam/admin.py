@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Variant
+from .models import Exam
 
-@admin.register(Variant)
-class VariantAdmin(admin.ModelAdmin):
+@admin.register(Exam)
+class ExamAdmin(admin.ModelAdmin):
     list_display = ['pk']

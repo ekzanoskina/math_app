@@ -25,7 +25,7 @@ def check_geometry():
         cache.set('tests_geometry', tests_geometry)
     return tests_geometry
 def get_tests(request, variant_id=None):
-    variant = Variant.objects.prefetch_related('exercise').get(pk=variant_id) if variant_id else None
+    variant = Exam.objects.prefetch_related('exercise').get(pk=variant_id) if variant_id else None
     exercise_in = variant.exercise.all() if variant else request.session['exercises_list']
     tests_qs = Test.objects.filter(exercise__in=exercise_in).select_related('exercise__subcategory__category')
     tests_qs = tests_qs.annotate(
@@ -138,7 +138,7 @@ def exam_filter(request):
     return render(request, 'exam/exam_filter.html', {'formset': formset})
     
 class ShowVariant(LoginRequiredMixin, ListView):
-    model = Variant
+    model = Exam
     template_name = 'exam/variants.html'
     context_object_name = 'variants'
 
