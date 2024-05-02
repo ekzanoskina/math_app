@@ -39,7 +39,7 @@
 </div>
             <form method="post">
               {% csrf_token %}
-                <input type="hidden" name="next" value="{{ next }}" />
+
                     <div class="form-error">{{ form.non_field_errors }}</div>
               {% for f in form %}
               <div class="form-floating mb-3">
@@ -73,6 +73,7 @@
       <div class="text-center">
         <p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p>
       </div>
+                                <input type="hidden" name="next" value="{{ next }}" />
             </form>
           </div>
         </div>

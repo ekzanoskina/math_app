@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import formset_factory, BooleanField
 from django.db.models import Q, Value
@@ -12,21 +14,20 @@ from django.core.cache import cache
 from django.db.models import Case, When, IntegerField
 
 
-# def get_tests_count(request, tests_part1, tests_part2):
-#     request.session['tests_count_0'] = len(tests_part1)
-#     request.session['tests_count_1'] = tests_count
-#     return tests_count
-
 def check_geometry():
     tests_geometry = cache.get('tests_geometry')
     if tests_geometry is None:
         # Using values_list with flat=True to get a list of ids directly
-        tests_geometry = list(Test.objects.filter(exercise__subcategory__category__id__in=[15, 16, 17, 18, 19, 23, 24, 25]).values_list('id', flat=True))
+        tests_geometry = list(
+            Test.objects.filter(exercise__subcategory__category__id__in=[15, 16, 17, 18, 19, 23, 24, 25]).values_list(
+                'id', flat=True))
         cache.set('tests_geometry', tests_geometry)
     return tests_geometry
+
+
 def get_tests(request, variant_id=None):
-    variant = Exam.objects.prefetch_related('exercise').get(pk=variant_id) if variant_id else None
-    exercise_in = variant.exercise.all() if variant else request.session['exercises_list']
+    variant = Exam.objects.prefetch_related('exercises').get(pk=variant_id) if variant_id else None
+    exercise_in = variant.exercises.all() if variant else request.session['exercises_list']
     tests_qs = Test.objects.filter(exercise__in=exercise_in).select_related('exercise__subcategory__category')
     tests_qs = tests_qs.annotate(
         part_2=Case(
@@ -39,6 +40,7 @@ def get_tests(request, variant_id=None):
 
     return tests
 
+
 def calculate_results(tests_part1_count, tests_part2_count, correct_answers, dict_part2_points):
     max_result = tests_part1_count + (tests_part2_count * 2)
     result = len(correct_answers)
@@ -46,8 +48,10 @@ def calculate_results(tests_part1_count, tests_part2_count, correct_answers, dic
     geometry_result = sum([1 for key, val in correct_answers.items() if int(key) in tests_geometry])
     if dict_part2_points:
         result += sum([int(point) for point in dict_part2_points.values() if point is not None])
-        geometry_result += sum([int(val) for key, val in dict_part2_points.items() if int(key) in tests_geometry and val is not None])
+        geometry_result += sum(
+            [int(val) for key, val in dict_part2_points.items() if int(key) in tests_geometry and val is not None])
     return max_result, result, geometry_result
+
 
 def calculate_mark(geometry_result, result):
     mark = '2'
@@ -60,22 +64,49 @@ def calculate_mark(geometry_result, result):
             mark = '5'
     return mark
 
+
 def show_progress(request, variant_id=None):
     tests_part1, tests_part2 = get_tests(request, variant_id)
     tests = tests_part1.prefetch_related('answer_set') | tests_part2
+    print(tests)
     session = request.session
     tests_part1_count, tests_part2_count = session.get('tests_count')
     answers = session.get('dict_answers')
     correct_answers = session.get('dict_correct_answers')
     dict_part2_points = session.get('dict_part2_points')
     time = session.get('time')
-    max_result, result, geometry_result = calculate_results(tests_part1_count, tests_part2_count, correct_answers, dict_part2_points)
+    hours, minutes, seconds = map(int, time.split(':'))
+    td = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    max_result, result, geometry_result = calculate_results(tests_part1_count, tests_part2_count, correct_answers,
+                                                            dict_part2_points)
     mark = calculate_mark(geometry_result, result)
-    return render(request, 'exam/progress.html', {'variant_id': variant_id, 'tests': tests, 'tests_part1': tests_part1, 'tests_part2': tests_part2, 'tests_part1_count': tests_part1_count, 'tests_part2_count': tests_part2_count, 'correct_answers': correct_answers, 'answers': answers, 'time': time, 'max_result': max_result, 'result': result, 'geometry_result': geometry_result, 'mark': mark})
+    if not request.user.is_anonymous:
+        exam = Exam.objects.create(creator=request.user)
+        test_ids = [test.id for test in tests]
+        exam.tests.add(*test_ids)
+        exam.save()
+        exam_attempt = ExamAttempt.objects.create(student=request.user, exam=exam, time_spent=td, max_score=max_result,
+                                                  score=result, geometry_score=geometry_result, mark=mark)
+        exam_attempt.save()
+        for test_id, answer in answers.items():
+            test = Test.objects.get(pk=test_id)
+            test_attempt = TestAttempt.objects.create(student=request.user, exam_attempt=exam_attempt, test=test,
+                                                      answer=answer)
+            test_attempt.save()
+    # print(exam_attempt.question_attempts.all())
+    request.session['dict_answers'] = {}
+    return render(request, 'exam/progress.html',
+                  {'variant_id': variant_id, 'tests': tests, 'tests_part1': tests_part1, 'tests_part2': tests_part2,
+                   'tests_part1_count': tests_part1_count, 'tests_part2_count': tests_part2_count,
+                   'correct_answers': correct_answers, 'answers': answers, 'time': time, 'max_result': max_result,
+                   'result': result, 'geometry_result': geometry_result, 'mark': mark})
 
-def handle_exam(request, tests, num_tests, form_class, template_name, variant_id=None, tests_part2=None, category_group=0):
+
+def handle_exam(request, tests, num_tests, form_class, template_name, variant_id=None, tests_part2=None,
+                category_group=0):
     dict_correct_answers = {}
     dict_part2_points = {}
+
     ExamFormSet = formset_factory(form_class, formset=BaseExamFormSet, extra=num_tests)
     if request.method == 'POST':
         formset = ExamFormSet(request.POST, form_kwargs={'tests': list(tests)})
@@ -102,44 +133,56 @@ def handle_exam(request, tests, num_tests, form_class, template_name, variant_id
         formset = ExamFormSet(form_kwargs={'tests': list(tests)})
     return render(request, template_name, {'formset': formset})
 
+
 def take_exam(request, variant_id=None):
     tests_part1, tests_part2 = get_tests(request, variant_id)
     tests = tests_part1 | tests_part2
     tests_count = (len(tests_part1), len(tests_part2))
     request.session['tests_count'] = tests_count
     num_tests = sum(tests_count)
-    return handle_exam(request, tests, num_tests, EssayForm, 'exam/exam.html', variant_id, tests_part2, category_group=0)
+    return handle_exam(request, tests, num_tests, EssayForm, 'exam/exam.html', variant_id, tests_part2,
+                       category_group=0)
+
+
 def take_exam2(request, variant_id=None):
     tests = get_tests(request, variant_id)[1]
     num_tests = request.session.get('tests_count')[1]
-    return handle_exam(request, tests, num_tests, QuestionForm, 'exam/exam2.html', variant_id, tests_part2=None, category_group=1)
+    return handle_exam(request, tests, num_tests, QuestionForm, 'exam/exam2.html', variant_id, tests_part2=None,
+                       category_group=1)
 
 
 def exam_filter(request):
     categories = Category.objects.prefetch_related('subcategory_set').all()
     num_cat = len(categories)
-    lst = []
-    FilterFormSet = formset_factory(form=FilterForm, formset=BaseFilterFormSet, extra=num_cat, max_num=num_cat, min_num=1, validate_min=True)
+    FilterFormSet = formset_factory(form=FilterForm, formset=BaseFilterFormSet, extra=num_cat, max_num=num_cat,
+                                    min_num=1, validate_min=True)
+    exercises_to_add = []
     if request.method == 'POST':
         formset = FilterFormSet(request.POST, form_kwargs={'categories': categories})
         if formset.is_valid():
+
             for form in formset:
                 if form.has_changed():
                     cat_quantity = form.cleaned_data.get('cat_quantity')
-                    subcategory = form.cleaned_data['subcategory']
+                    subcategory = form.cleaned_data.get('subcategory')
+
                     if cat_quantity:
                         exercises = Exercise.objects.filter(subcategory__in=subcategory).order_by('?')[:cat_quantity]
-                        lst.extend(ex.id for ex in exercises)
-            request.session['exercises_list'] = lst
+                        exercises_to_add.extend(exercises)
+
+            request.session['exercises_list'] = [ex.id for ex in exercises_to_add]
+
             return redirect('exam')
 
     else:
         formset = FilterFormSet(form_kwargs={'categories': categories})
+
     return render(request, 'exam/exam_filter.html', {'formset': formset})
-    
+
+
 class ShowVariant(LoginRequiredMixin, ListView):
-    model = Exam
     template_name = 'exam/variants.html'
     context_object_name = 'variants'
-
-
+    queryset = Exam.objects.filter(
+        admin_created=True).all()
+    print(queryset)

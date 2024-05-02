@@ -3,11 +3,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm, UserPasswordChangeForm
+from exam.models import *
 
 
 # Create your views here.
@@ -15,11 +16,18 @@ class LoginUser(LoginView):
     form_class = LoginUserForm
     template_name = 'users/login.html'
     extra_context = {'title': "Вход"}
+    def form_valid(self, form):
+        # Вызываем базовый метод form_valid для обработки авторизации
+        response = super().form_valid(form)
 
-    # def get_success_url(self):
-    #     """Добавляет переход по адресу, с которого пользователь попал на страницу авторизации"""
-    #     next_url = self.request.GET.get('next', reverse_lazy('home'))
-    #     return next_url
+        # Получаем параметр 'next' из GET запроса
+        next_url = self.request.GET.get('next', None)
+        if next_url:
+            return redirect(next_url)
+        else:
+            # Если параметр 'next' не указан, перенаправляем на главную страницу или другую страницу по умолчанию
+            return redirect('home')
+
 
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
@@ -45,3 +53,14 @@ class UserPasswordChange(PasswordChangeView):
     success_url = reverse_lazy("users:password_change_done")
     template_name = "users/password_change_form.html"
     extra_context = {'title': "Изменение пароля"}
+
+class Statistics(ListView):
+    model = ExamAttempt
+    template_name = 'users/statistics.html'
+    context_object_name = 'exam_attempts'
+    extra_context = {'title': 'Стастистика'}
+
+    def get_queryset(self):
+        return ExamAttempt.objects.filter(student=self.request.user).all()
+
+

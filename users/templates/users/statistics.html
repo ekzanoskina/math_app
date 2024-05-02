@@ -1,0 +1,33 @@
+{% extends 'math_app/base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block head %}
+	<link type="text/css" href="{% static 'exam/css/styles.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row" >
+        <div class="col-xs-12 col-lg-8">
+            {% if exam_attempts %}
+            <p> Статистика по работам</p>
+
+            {% for attempt in exam_attempts %}
+            <p> Оценка: {{attempt.mark}}  </p>
+            <p> Время: {{attempt.time_spent}}  </p>
+            <p> Набрано баллов: {{attempt.score}}  </p>
+            <hr>
+            {% endfor %}
+                        {% else %}
+            <p>Пока не выполнено ни одной работы.</p>
+
+            {% endif %}
+
+
+        </div>
+        </div>
+      </div>
+</main>
+{% endblock %}

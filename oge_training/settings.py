@@ -237,9 +237,8 @@ CKEDITOR_CONFIGS = {
 }
 
 LOGOUT_REDIRECT_URL = 'home'
-LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'users:login'
-
+# LOGIN_REDIRECT_URL = 'home'
 # Настройка почтового сервера для восстановления пароля
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"

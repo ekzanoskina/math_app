@@ -39,7 +39,7 @@
 </div>
             <form method="post">
               {% csrf_token %}
-                <input type="hidden" name="next" value="{{ next }}" />
+
                     <div class="form-error">{{ form.non_field_errors }}</div>
               {% for f in form %}
               <div class="form-floating mb-3">
@@ -50,11 +50,13 @@
 {% endfor %}
 
                   <div class="d-grid mb-5">
+                      <input type="hidden" name="next" value="{{ request.GET.next }}">
                 <button class="btn btn-primary text-uppercase fw-bold" type="submit">Зарегистрироваться</button>
               </div>
                     <div class="text-center">
         <p>Есть аккаунт? <a href="{% url 'users:login' %}">Войти</a></p>
       </div>
+
 </form>
 {% endblock %}
                       </div>
