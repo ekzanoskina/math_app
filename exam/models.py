@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.urls import reverse
 from math_app.models import *
+from django.utils.timezone import now
 
 from users.models import User
 
@@ -31,7 +32,7 @@ class ExamAttempt(models.Model):
     geometry_score = models.IntegerField(null=True, blank=True)
     mark = models.CharField(max_length=1, null=True, blank=True)
     time_spent = models.DurationField()
-    completed_date = models.DateTimeField(auto_now_add=True)
+    completed_date = models.DateTimeField(default=now)
 
 
 class TestAttempt(models.Model):

@@ -14,8 +14,7 @@
             {% if request.user.is_authenticated %} Hello, {{ request.user.username }}
             <a href="{% url 'users:statistics' %}">Перейти к статистике</a>
             {% else %}
-
-            <p> Ваши результаты не сохранены. Для сохранения <a href="{% url 'users:login' %}?next={{request.path}}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
+            <p> Ваши результаты не сохранены. Для сохранения <a href="{% url 'users:login' %}?next={{ request.GET.next|default:request.path }}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
             {% endif %}
             {% if variant_id %}
             <p> Вариант №: {{variant_id}}</p>

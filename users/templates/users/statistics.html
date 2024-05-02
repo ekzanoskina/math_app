@@ -12,12 +12,49 @@
     <div class="row" >
         <div class="col-xs-12 col-lg-8">
             {% if exam_attempts %}
-            <p> Статистика по работам</p>
+            <div class="mb-3">
+            <h2> Статистика по работам</h2>
+</div>
+            {% for exam_attempt in exam_attempts %}
+  <h4> Вариант № {{exam_attempt.id}}  </h4>
+            <p>В работе 4 задания с кратким ответом, 2 задания с развернутым ответом.
+Максимум баллов: {{exam_attempt.max_score}}. Оценка «5» за 7, «4» за 5, «3» за 3 балла.</p>
+<div class="row">
+  <div class="col-md-4">
+    <p>{{exam_attempt.completed_date}}</p>
+  </div>
+  <div class="col-md-4">
+      <p>{{exam_attempt.score}} из {{exam_attempt.max_score}}</p>
 
-            {% for attempt in exam_attempts %}
-            <p> Оценка: {{attempt.mark}}  </p>
-            <p> Время: {{attempt.time_spent}}  </p>
-            <p> Набрано баллов: {{attempt.score}}  </p>
+    <!-- Column 2 content -->
+  </div>
+  <div class="col-md-4">
+      <p>оценка: {{exam_attempt.mark}}</p>
+    <!-- Column 3 content -->
+  </div>
+    <span class="mx-auto">
+  {% for test_attempt in exam_attempt.question_attempts.all %}
+    <span class="col-auto">
+        {% if not test_attempt.test.check_part_2 %}
+
+                {% if test_attempt.answer in test_attempt.test.get_answers %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-success btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ forloop.counter }}</a>
+
+        {% else %}
+
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-danger btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ forloop.counter }}</a>
+        {% endif %}
+        {% else %}
+                        {% if test_attempt.answer == '2' %}
+       <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-success btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ forloop.counter }}</a>
+        {% elif test_attempt.answer == '1' %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-warning btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ forloop.counter }}</a>
+        {% else %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-danger btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ forloop.counter }}</a>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
             <hr>
             {% endfor %}
                         {% else %}
@@ -27,7 +64,7 @@
 
 
         </div>
-        </div>
       </div>
-</main>
+
+
 {% endblock %}

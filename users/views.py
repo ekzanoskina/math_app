@@ -33,7 +33,16 @@ class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'users/register.html'
     extra_context = {'title': "Регистрация"}
-    success_url = reverse_lazy('users:login')
+
+    def get_success_url(self):
+        # Получаем параметр 'next' из запроса
+        next_url = self.request.GET.get('next', '')
+        login_url = reverse_lazy('users:login')
+
+        # Если параметр 'next' есть, добавляем его к URL авторизации
+        if next_url:
+            login_url = f"{login_url}?next={next_url}"
+        return login_url
 
 
 class ProfileUser(LoginRequiredMixin, UpdateView):

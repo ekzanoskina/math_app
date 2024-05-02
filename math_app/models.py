@@ -58,6 +58,9 @@ class Test(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def check_part_2(self):
+        return self.exercise.subcategory.category.id > 19
+
 
     def get_absolute_url(self):
         return reverse('test', kwargs={'test_id': self.pk})
