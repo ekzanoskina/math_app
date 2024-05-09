@@ -50,7 +50,7 @@ class Test(models.Model):
     time_update = models.DateTimeField(auto_now=True)
     solution = RichTextUploadingField(blank=True, null=True, verbose_name='Решение')
     criteria = RichTextUploadingField(blank=True, null=True, verbose_name='Критерии')
-    # part2 = models.BooleanField(default=False, blank=True)
+    part2 = models.BooleanField(default=False, blank=True)
 
     class Meta:
         ordering = ('exercise__subcategory__category__id',)
@@ -60,6 +60,7 @@ class Test(models.Model):
 
     def check_part_2(self):
         return self.exercise.subcategory.category.id > 19
+
 
 
     def get_absolute_url(self):

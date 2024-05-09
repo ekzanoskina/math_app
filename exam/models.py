@@ -23,6 +23,12 @@ class Exam(models.Model):
     def get_absolute_url(self):
         return reverse('exam', kwargs={'variant_id': self.pk})
 
+    # def tests_part1_count(self):
+    #     return self.tests.filter(part2=False).count()
+    #
+    # def tests_part2_count(self):
+    #     return self.tests.filter(part2=True).count()
+
 class ExamAttempt(models.Model):
     # 'time': time, 'max_result': max_result, 'result': result, 'geometry_result': geometry_result, 'mark': mark
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exam_attempts')

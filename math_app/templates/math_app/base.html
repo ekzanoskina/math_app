@@ -19,9 +19,7 @@
 <nav class="navbar sticky-top navbar-expand-sm bg-dark navbar-dark py-3 text-center">
     <div class="container">
         <a class="navbar-brand fs-5" href="{% url 'home' %}">Math app</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+
         <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
@@ -34,8 +32,23 @@
                     <a class="nav-link fs-5" href="{% url 'exam_filter' %}">Составить вариант</a>
                 </li>
             </ul>
-            <a href="{% url 'users:profile' %}">{{user.username}}</a> |
-            <a class="btn btn-warning fs-5" href="{% url 'users:login' %}">Войти</a>
+                  <!-- Avatar -->
+            {% if user.is_authenticated %}
+                 <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle-no-caret" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img src="{{MEDIA_URL}}/media/users/default.jpg" width="35" height="35" class="rounded-circle">
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a>
+          <a class="dropdown-item" href="{% url 'statistics' %}">Статистика</a>
+          <a class="dropdown-item" href="{% url 'users:logout' %}">Выйти</a>
+        </div>
+      </li>
+    </ul>
+            {% else %}
+<a type="button" href="{% url 'users:login' %}" class="btn btn-outline-light fs-5">Войти</a>
+            {% endif %}
         </div>
     </div>
 </nav>

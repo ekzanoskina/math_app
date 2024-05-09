@@ -1,0 +1,78 @@
+{% extends 'math_app/base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block head %}
+	<link type="text/css" href="{% static 'exam/css/styles.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row" >
+        <div class="col-xs-12 col-lg-8">
+            {% if exam_attempts %}
+            <div class="mb-3">
+            <h2> Статистика по работам</h2>
+</div>
+            {% for exam_attempt in exam_attempts %}
+            <div>
+<div class="row justify-content-md-start">
+  <div class="col-md-auto">
+    <h5>Вариант № {{ exam_attempt.exam.id }}</h5>
+  </div>
+  <div class="col-md-auto">
+    <a href="{% url 'exam' variant_id=exam_attempt.exam.id %}">Повторить</a>
+  </div>
+</div>
+            </div>
+                <p>Заданий с кратким ответом: {{exam_attempt.tests_part1_count}}, с развернутым ответом: {{exam_attempt.tests_part2_count}}. Максимальный балл: {{exam_attempt.tests_part1_count}} + {% widthratio exam_attempt.tests_part2_count 1 2 %}  = {{exam_attempt.max_score}}.</p>
+<div class="row">
+  <div class="col-md-4">
+    <p>{{exam_attempt.completed_date}}</p>
+  </div>
+  <div class="col-md-4">
+      <p>{{exam_attempt.score}} из {{exam_attempt.max_score}}</p>
+
+    <!-- Column 2 content -->
+  </div>
+  <div class="col-md-4">
+      <p>оценка: {{exam_attempt.mark}}</p>
+    <!-- Column 3 content -->
+  </div>
+    <span class="mx-auto">
+  {% for test_attempt in exam_attempt.question_attempts.all %}
+    <span class="col-auto">
+        {% if not test_attempt.test.part_2 %}
+
+                {% if test_attempt.answer in test_attempt.test.get_answers %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-success btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ test_attempt.test.get_category_number}}</a>
+
+        {% else %}
+
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-danger btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ test_attempt.test.get_category_number }}</a>
+        {% endif %}
+        {% else %}
+                        {% if test_attempt.answer == '2' %}
+       <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-success btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ test_attempt.test.get_category_number }}</a>
+        {% elif test_attempt.answer == '1' %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-warning btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ test_attempt.test.get_category_number }}</a>
+        {% else %}
+      <a href="{{ test_attempt.test.get_absolute_url }}" class="btn btn-danger btn-circle btn-circle-sm m-1 text-white text-decoration-none">{{ test_attempt.test.get_category_number }}</a>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+            <hr>
+            {% endfor %}
+                        {% else %}
+            <p>Пока не выполнено ни одной работы.</p>
+
+            {% endif %}
+
+
+        </div>
+      </div>
+
+
+{% endblock %}

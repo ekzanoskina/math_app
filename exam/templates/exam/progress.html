@@ -12,7 +12,7 @@
     <div class="row" >
         <div class="col-xs-12 col-lg-8">
             {% if request.user.is_authenticated %} Hello, {{ request.user.username }}
-            <a href="{% url 'users:statistics' %}">Перейти к статистике</a>
+            <a href="{% url 'statistics' %}">Перейти к статистике</a>
             {% else %}
             <p> Ваши результаты не сохранены. Для сохранения <a href="{% url 'users:login' %}?next={{ request.GET.next|default:request.path }}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
             {% endif %}
@@ -26,7 +26,7 @@
 
             <p> Время выполнения: {{time}} </p>
             <p> Набрано баллов: {{result}} </p>
-            <p> Набрано баллов по геметрии: {{geometry_result}} </p>
+            <p> Набрано баллов по геометрии: {{geometry_result}} </p>
 
         {% if tests_part1_count %}
     <h2>Тестовая часть</h2>

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -63,13 +64,6 @@ class UserPasswordChange(PasswordChangeView):
     template_name = "users/password_change_form.html"
     extra_context = {'title': "Изменение пароля"}
 
-class Statistics(ListView):
-    model = ExamAttempt
-    template_name = 'users/statistics.html'
-    context_object_name = 'exam_attempts'
-    extra_context = {'title': 'Стастистика'}
 
-    def get_queryset(self):
-        return ExamAttempt.objects.filter(student=self.request.user).all()
 
 

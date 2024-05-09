@@ -6,3 +6,4 @@ class ExamAdmin(admin.ModelAdmin):
     list_display = ['pk']
 
 
+

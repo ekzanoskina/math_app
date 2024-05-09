@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import formset_factory, BooleanField
-from django.db.models import Q, Value
+from django.db.models import Q, Value, Count
 from django.http import HttpResponse, request
 from django.shortcuts import render, get_object_or_404, redirect
 from math_app.models import *
@@ -26,9 +26,11 @@ def check_geometry():
 
 
 def get_tests(request, variant_id=None):
-    variant = Exam.objects.prefetch_related('exercises').get(pk=variant_id) if variant_id else None
-    exercise_in = variant.exercises.all() if variant else request.session['exercises_list']
-    tests_qs = Test.objects.filter(exercise__in=exercise_in).select_related('exercise__subcategory__category')
+    variant = Exam.objects.prefetch_related('tests').get(pk=variant_id) if variant_id else None
+    # exercise_in = variant.tests.all() if variant else request.session['tests_list']
+    tests_qs = variant.tests.all() if variant else Test.objects.filter(id__in=request.session['tests_list']).select_related('exercise__subcategory__category')
+    # print(variant.tests.all())
+    # tests_qs = Test.objects.filter(id__in=exercise_in).select_related('exercise__subcategory__category')
     tests_qs = tests_qs.annotate(
         part_2=Case(
             When(exercise__subcategory__category__id__lt=20, then=False),
@@ -68,7 +70,6 @@ def calculate_mark(geometry_result, result):
 def show_progress(request, variant_id=None):
     tests_part1, tests_part2 = get_tests(request, variant_id)
     tests = tests_part1.prefetch_related('answer_set') | tests_part2
-    print(tests)
     session = request.session
     tests_part1_count, tests_part2_count = session.get('tests_count')
     answers = session.get('dict_answers')
@@ -81,20 +82,23 @@ def show_progress(request, variant_id=None):
                                                             dict_part2_points)
     mark = calculate_mark(geometry_result, result)
     if not request.user.is_anonymous:
-        exam = Exam.objects.create(creator=request.user)
-        test_ids = [test.id for test in tests]
-        exam.tests.add(*test_ids)
-        exam.save()
+        if variant_id is None:
+            exam = Exam.objects.create(creator=request.user)
+            test_ids = [test.id for test in tests]
+            exam.tests.add(*test_ids)
+            exam.save()
+        else:
+            exam = Exam.objects.get(pk=variant_id)
         exam_attempt = ExamAttempt.objects.create(student=request.user, exam=exam, time_spent=td, max_score=max_result,
-                                                  score=result, geometry_score=geometry_result, mark=mark)
+                                                      score=result, geometry_score=geometry_result, mark=mark)
         exam_attempt.save()
         for test_id, answer in answers.items():
             test = Test.objects.get(pk=test_id)
             test_attempt = TestAttempt.objects.create(student=request.user, exam_attempt=exam_attempt, test=test,
-                                                      answer=answer)
+                                                          answer=answer)
             test_attempt.save()
-    # print(exam_attempt.question_attempts.all())
-    request.session['dict_answers'] = {}
+
+
     return render(request, 'exam/progress.html',
                   {'variant_id': variant_id, 'tests': tests, 'tests_part1': tests_part1, 'tests_part2': tests_part2,
                    'tests_part1_count': tests_part1_count, 'tests_part2_count': tests_part2_count,
@@ -135,6 +139,7 @@ def handle_exam(request, tests, num_tests, form_class, template_name, variant_id
 
 
 def take_exam(request, variant_id=None):
+    request.session['dict_answers'] = {}
     tests_part1, tests_part2 = get_tests(request, variant_id)
     tests = tests_part1 | tests_part2
     tests_count = (len(tests_part1), len(tests_part2))
@@ -156,7 +161,7 @@ def exam_filter(request):
     num_cat = len(categories)
     FilterFormSet = formset_factory(form=FilterForm, formset=BaseFilterFormSet, extra=num_cat, max_num=num_cat,
                                     min_num=1, validate_min=True)
-    exercises_to_add = []
+    tests_to_add = []
     if request.method == 'POST':
         formset = FilterFormSet(request.POST, form_kwargs={'categories': categories})
         if formset.is_valid():
@@ -168,9 +173,10 @@ def exam_filter(request):
 
                     if cat_quantity:
                         exercises = Exercise.objects.filter(subcategory__in=subcategory).order_by('?')[:cat_quantity]
-                        exercises_to_add.extend(exercises)
+                        tests = Test.objects.filter(exercise__in=exercises).all()
+                        tests_to_add.extend(tests)
 
-            request.session['exercises_list'] = [ex.id for ex in exercises_to_add]
+            request.session['tests_list'] = [test.id for test in tests_to_add]
 
             return redirect('exam')
 
@@ -186,3 +192,28 @@ class ShowVariant(LoginRequiredMixin, ListView):
     queryset = Exam.objects.filter(
         admin_created=True).all()
     print(queryset)
+
+class ShowStatistics(ListView):
+    template_name = 'exam/statistics.html'
+    context_object_name = 'exam_attempts'
+    extra_context = {'title': 'Статистика'}
+
+    def get_queryset(self):
+        exam_attempts = ExamAttempt.objects.filter(student=self.request.user).prefetch_related('exam__tests',
+                                                                                               'question_attempts__test__exercise__subcategory',
+                                                                                               'question_attempts__test__answer_set').annotate(
+            tests_part2_count=Count(
+                Case(
+                    When(exam__tests__part2=True, then=1),
+                    output_field=IntegerField()
+                )
+            ),
+            tests_part1_count=Count(
+                Case(
+                    When(exam__tests__part2=False, then=1),
+                    output_field=IntegerField()
+                )
+            ),
+        )
+        # exam_attempts = ExamAttempt.objects.filter(student=self.request.user).prefetch_related('question_attempts').all()
+        return exam_attempts

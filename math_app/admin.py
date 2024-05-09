@@ -33,6 +33,7 @@ class AnswerInline(nested_admin.NestedStackedInline):
 class TestAdmin(admin.ModelAdmin):
     list_display = ['id']
     inlines=[AnswerInline, ]
+    list_filter = ["exercise__subcategory__category__id"]
 class TestInline(nested_admin.NestedStackedInline):
     model = Test
     inlines = [AnswerInline,]
