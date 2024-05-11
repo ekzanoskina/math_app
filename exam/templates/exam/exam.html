@@ -32,9 +32,8 @@
                     {% endif %}
                     <b>Задание №{{forloop.counter}}</b> Тип {{form.test.get_category_number}} <a
                         href="{{ form.test.get_absolute_url }}">id {{form.test.id}}</a>
-                    {{form.test.problem_text | safe}}
-
-                    {% if not form.test.part_2 %}
+                    <p>{{form.test.problem_text | safe}}</p>
+                    {% if not form.test.part2 %}
                     {{form.as_p}}
                     {% endif %}
                     {% endfor %}

@@ -11,8 +11,10 @@
   <div class="container">
     <div class="row" >
         <div class="col-xs-12 col-lg-8">
-            {% if request.user.is_authenticated %} Hello, {{ request.user.username }}
+            {% if request.user.is_authenticated %}
+            <p>Результаты успешно сохранены в Вашем профиле, {{ request.user.username }}.
             <a href="{% url 'statistics' %}">Перейти к статистике</a>
+            </p>
             {% else %}
             <p> Ваши результаты не сохранены. Для сохранения <a href="{% url 'users:login' %}?next={{ request.GET.next|default:request.path }}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
             {% endif %}
@@ -20,13 +22,13 @@
             <p> Вариант №: {{variant_id}}</p>
 
             {% endif %}
-            <p> Оценка: {{mark}}  </p>
+            <p> <b>Оценка:</b> {{mark}}  </p>
 
-            Заданий с кратким ответом: {{tests_part1_count}}, с развернутым ответом: {{tests_part2_count}} Максимальный балл: {{tests_part1_count}} + {% widthratio tests_part2_count 1 2 %}  = {{max_result}}
+            <p>Заданий с кратким ответом: {{tests_part1_count}}, с развернутым ответом: {{tests_part2_count}}. <b>Максимальный балл:</b> {{tests_part1_count}} + {% widthratio tests_part2_count 1 2 %}  = {{max_result}}</p>
 
-            <p> Время выполнения: {{time}} </p>
-            <p> Набрано баллов: {{result}} </p>
-            <p> Набрано баллов по геометрии: {{geometry_result}} </p>
+            <p> <b>Время выполнения:</b>  {{time}}</p>
+            <p> <b>Набрано баллов:</b> {{result}} </p>
+            <p> <b>Набрано баллов по геометрии:</b> {{geometry_result}} </p>
 
         {% if tests_part1_count %}
     <h2>Тестовая часть</h2>
@@ -41,7 +43,7 @@
         </thead>
   <tbody>
   {% for test in tests %}
-  {% if not test.part_2 %}
+  {% if not test.part2 %}
     <tr>
       <td>{{ forloop.counter }}</td>
       <td><a href="{{ test.get_absolute_url }}">{{ test.pk }}</a></td>
@@ -73,7 +75,7 @@
         </thead>
   <tbody>
   {% for test in tests %}
-  {% if test.part_2 %}
+  {% if test.part2 %}
     <tr>
       <td>{{ forloop.counter }}</td>
       <td><a href="{{ test.get_absolute_url }}" >{{ test.pk }}</a></td>
@@ -112,7 +114,7 @@
     <h2>Решения</h2>
     {% for test in tests %}
 
-            {% if not test.part_2 %}
+            {% if not test.part2 %}
             {% if not forloop.first %}<hr>{% endif %}
                     {% with answer=answers|get_value:test %}
         {% if answer in test.get_answers %}

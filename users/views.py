@@ -1,12 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.db.models import Prefetch
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, ListView
+from django.views.generic import CreateView, UpdateView
 
 from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm, UserPasswordChangeForm
 from exam.models import *
@@ -14,6 +11,10 @@ from exam.models import *
 
 # Create your views here.
 class LoginUser(LoginView):
+    """
+    Класс `LoginUser` наследуется от `LoginView` и предназначен для авторизации пользователей.
+    После успешной авторизации перенаправляет пользователя на указанный в параметре `next` адрес или, если параметр отсутствует, на домашнюю страницу.
+    """
     form_class = LoginUserForm
     template_name = 'users/login.html'
     extra_context = {'title': "Вход"}
@@ -31,6 +32,7 @@ class LoginUser(LoginView):
 
 
 class RegisterUser(CreateView):
+    """Класс `RegisterUser` наследуется от `CreateView` и отвечает за регистрацию нового пользователя."""
     form_class = RegisterUserForm
     template_name = 'users/register.html'
     extra_context = {'title': "Регистрация"}
@@ -47,6 +49,7 @@ class RegisterUser(CreateView):
 
 
 class ProfileUser(LoginRequiredMixin, UpdateView):
+    """Класс `ProfileUser` наследуется от `LoginRequiredMixin` и `UpdateView`, ограничивая доступ к редактированию профиля только аутентифицированным пользователям."""
     model = get_user_model()
     form_class = ProfileUserForm
     template_name = 'users/profile.html'
@@ -59,6 +62,7 @@ class ProfileUser(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 class UserPasswordChange(PasswordChangeView):
+    """Класс `UserPasswordChange` наследуется от `PasswordChangeView` и позволяет пользователям изменять свой пароль."""
     form_class = UserPasswordChangeForm
     success_url = reverse_lazy("users:password_change_done")
     template_name = "users/password_change_form.html"
