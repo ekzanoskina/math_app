@@ -7,80 +7,81 @@
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <div class="card border-0 shadow rounded-3 my-5">
-          <div class="card-body p-4 p-sm-5">
-            <h5 class="card-title text-center mb-3 fs-5">{{title}}</h5>
-                                        <!-- Register buttons -->
-      <div class="text-center mb-3">
-        <button type="button" class="btn btn-icon rounded-circle">
-          <i class="bi bi-facebook"></i>
-        </button>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-3 fs-5">{{title}}</h5>
+                        <!-- Register buttons -->
+                        <div class="text-center mb-3">
+                            <button type="button" class="btn btn-icon rounded-circle">
+                                <i class="bi bi-facebook"></i>
+                            </button>
 
-        <button type="button" class="btn btn-icon rounded-circle">
-          <i class="bi bi-google"></i>
-        </button>
+                            <button type="button" class="btn btn-icon rounded-circle">
+                                <i class="bi bi-google"></i>
+                            </button>
 
-        <button type="button" class="btn btn-icon rounded-circle">
-          <i class="bi bi-twitter"></i>
-        </button>
+                            <button type="button" class="btn btn-icon rounded-circle">
+                                <i class="bi bi-twitter"></i>
+                            </button>
 
-        <button type="button" class="btn btn-icon rounded-circle">
-          <i class="bi bi-github"></i>
-        </button>
-      </div>
-              <div class="d-flex align-items-center my-4">
-  <hr class="flex-grow-1">
-  <span class="mx-3">или</span>
-  <hr class="flex-grow-1">
-</div>
-            <form method="post">
-              {% csrf_token %}
+                            <button type="button" class="btn btn-icon rounded-circle">
+                                <i class="bi bi-github"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center my-4">
+                            <hr class="flex-grow-1">
+                            <span class="mx-3">или</span>
+                            <hr class="flex-grow-1">
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
 
-                    <div class="form-error">{{ form.non_field_errors }}</div>
-              {% for f in form %}
-              <div class="form-floating mb-3">
-                {{f}}
-                <label class="form-label" for="{{ f.id_for_label }}">{{f.label}}</label>
-                      <div class="form-error">{{ f.errors }}</div>
-              </div>
-{% endfor %}
+                            <div class="form-error">{{ form.non_field_errors }}</div>
+                            {% for f in form %}
+                            <div class="form-floating mb-3">
+                                {{f}}
+                                <label class="form-label" for="{{ f.id_for_label }}">{{f.label}}</label>
+                                <div class="form-error">{{ f.errors }}</div>
+                            </div>
+                            {% endfor %}
 
-      <div class="row mb-4">
-        <div class="col-md-6 d-flex">
-          <!-- Checkbox -->
-          <div class="form-check mb-3 mb-md-0">
-            <input class="form-check-input" type="checkbox" value="" id="loginCheck" checked />
-            <label class="form-check-label" for="loginCheck"> Запомнить меня </label>
-          </div>
+                            <div class="row mb-4">
+                                <div class="col-md-6 d-flex">
+                                    <!-- Checkbox -->
+                                    <div class="form-check mb-3 mb-md-0">
+                                        <input class="form-check-input" type="checkbox" value="" id="loginCheck" checked />
+                                        <label class="form-check-label" for="loginCheck"> Запомнить меня </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 d-flex justify-content-end">
+                                    <!-- Simple link -->
+                                    <a href="{% url 'users:password_reset' %}">Забыли пароль?</a>
+                                </div>
+                            </div>
+                            <div class="d-grid mb-5">
+                                <button class="btn btn-primary text-uppercase fw-bold" type="submit">Войти</button>
+                            </div>
+
+                            <!--              <br class="my-4">-->
+
+                            <!-- Register buttons -->
+                            <div class="text-center">
+                                <p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p>
+                            </div>
+                            <input type="hidden" name="next" value="{{ next }}" />
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-6 d-flex justify-content-end">
-          <!-- Simple link -->
-          <a href="{% url 'users:password_reset' %}">Забыли пароль?</a>
-        </div>
-      </div>
-              <div class="d-grid mb-5">
-                <button class="btn btn-primary text-uppercase fw-bold" type="submit">Войти</button>
-              </div>
-
-<!--              <br class="my-4">-->
-
-                      <!-- Register buttons -->
-      <div class="text-center">
-        <p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p>
-      </div>
-                                <input type="hidden" name="next" value="{{ next }}" />
-            </form>
-          </div>
-        </div>
-      </div>
     </div>
-
-  </div>
 
 </body>
 {% endblock %}
