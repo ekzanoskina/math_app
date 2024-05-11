@@ -90,7 +90,6 @@ def show_progress(request, variant_id=None):
     td = timedelta(hours=hours, minutes=minutes, seconds=seconds)
     max_result, result, geometry_result = calculate_results(tests_part1_count, tests_part2_count, correct_answers,
                                                             part2_points)
-    print(result)
     mark = calculate_mark(geometry_result, result)
     if not request.user.is_anonymous:
         if variant_id is None:

@@ -12,11 +12,11 @@
     <div class="row" >
         <div class="col-xs-12 col-lg-8">
             {% if request.user.is_authenticated %}
-            <p>Результаты успешно сохранены в Вашем профиле, {{ request.user.username }}.
+            <p>Результаты <b>успешно сохранены</b> в Вашем профиле, {{ request.user.username }}.
             <a href="{% url 'statistics' %}">Перейти к статистике</a>
             </p>
             {% else %}
-            <p> Ваши результаты не сохранены. Для сохранения <a href="{% url 'users:login' %}?next={{ request.GET.next|default:request.path }}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
+            <p> Ваши результаты <b>не сохранены</b>. Для сохранения <a href="{% url 'users:login' %}?next={{ request.GET.next|default:request.path }}">войдите</a> в систему или <a href="{% url 'users:register' %}?next={{ request.GET.next|default:request.path }}">зарегистрируйтесь</a>.</p>
             {% endif %}
             {% if variant_id %}
             <p> Вариант №: {{variant_id}}</p>

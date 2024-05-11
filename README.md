@@ -83,7 +83,10 @@ DEBUG=False
 EMAIL_HOST_USER = "<your_email>@yandex.ru"
 EMAIL_HOST_PASSWORD = '<your_email_password>'
 ```
-
+Запустите программу
+```
+python manage.py runserver
+```
 
 Использование
 ------------
