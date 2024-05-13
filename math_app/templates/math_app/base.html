@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -18,10 +19,12 @@
 </head>
 <body>
 <!-- Блок меню -->
-<nav class="navbar sticky-top navbar-expand-sm bg-dark navbar-dark py-3 text-center">
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark py-3 text-center">
     <div class="container">
         <a class="navbar-brand fs-5" href="{% url 'home' %}">Math app</a>
-
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
         <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
@@ -41,7 +44,7 @@
         <a class="dropdown-toggle-no-caret" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <img src="{{MEDIA_URL}}/media/users/default.jpg" width="35" height="35" class="rounded-circle">
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <div class="dropdown-menu dropdown-menu-end dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a>
           <a class="dropdown-item" href="{% url 'statistics' %}">Статистика</a>
           <a class="dropdown-item" href="{% url 'users:logout' %}">Выйти</a>
@@ -75,10 +78,9 @@
 <!-- Конец блока back to top button -->
 
 <script src="{% static 'math_app/js/jquery-3.7.0.JS' %}"></script>
-<script src="{% static 'math_app/js/bootstrap_js/bootstrap.min.js' %}"></script>
+<!--<script src="{% static 'math_app/js/bootstrap_js/bootstrap.min.js' %}"></script>-->
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script src="{% static 'math_app/js/index.js' %}"></script>
-
 
 </body>
 </html>

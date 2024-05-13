@@ -16,7 +16,7 @@
                     id {{ test.pk }}</b></p>
                 {% if test.exercise.description %}
                 {{test.exercise.description|safe}}
-                <img width="100%" src="{{test.exercise.picture.url}}">
+                <img width="50%" src="{{test.exercise.picture.url}}">
                 {% endif %}
                 <p>{{test.problem_text |safe }}</p>
                 <button class="btn btn-link reveal solution">Показать решение</button>
