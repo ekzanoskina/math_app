@@ -90,5 +90,5 @@ python manage.py runserver
 
 Использование
 ------------
-Проект задеплоен на бесперебойно работающий сервер [Heroku](https://www.heroku.com/).
-Ссылка на бота https://t.me/TripFriendBot.
+Проект задеплоен на бесперебойно работающий сервер [PythonAnywhere](https://www.pythonanywhere.com/).
+Ссылка на проект https://zanoskina.pythonanywhere.com
