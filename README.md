@@ -92,6 +92,5 @@ python manage.py runserver
 
 Использование
 ------------
-Проект задеплоен на бесперебойно работающий сервер PythonAnywhere. 
+Проект задеплоен на бесперебойно работающий сервер [PythonAnywhere](https://www.pythonanywhere.com/).
 Ссылка на проект https://zanoskina.pythonanywhere.com
-
