@@ -82,6 +82,8 @@ SECRET_KEY='<your_secret_key>'
 DEBUG=False
 EMAIL_HOST_USER = "<your_email>@yandex.ru"
 EMAIL_HOST_PASSWORD = '<your_email_password>'
+SOCIAL_AUTH_GITHUB_SECRET = ''
+SOCIAL_AUTH_GITHUB_KEY = ''
 ```
 Запустите программу
 ```
@@ -90,5 +92,6 @@ python manage.py runserver
 
 Использование
 ------------
-Проект задеплоен на бесперебойно работающий сервер [PythonAnywhere](https://www.pythonanywhere.com/).
+Проект задеплоен на бесперебойно работающий сервер PythonAnywhere. 
 Ссылка на проект https://zanoskina.pythonanywhere.com
+
