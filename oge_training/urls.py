@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('math_app.urls')),
     path('exam/', include('exam.urls')),
     path('users/', include('users.urls', namespace="users")),
+    path('social-auth/', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:

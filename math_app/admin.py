@@ -41,7 +41,7 @@ class TestInline(nested_admin.NestedStackedInline):
 
 @admin.register(Exercise)
 class ExerciseAdmin(nested_admin.NestedModelAdmin):
-    list_display = ['id', 'time_create', 'time_update']
+    list_display = ['id', 'subcategory']
     list_filter = ['id']
     search_fields = ['id', 'content']
     inlines = [TestInline,]

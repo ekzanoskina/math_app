@@ -19,6 +19,10 @@ class LoginUser(LoginView):
     template_name = 'users/login.html'
     extra_context = {'title': "Вход"}
     def form_valid(self, form):
+        remember_me = form.cleaned_data.get('remember_me') # get remember me data from cleaned_data of form
+        if not remember_me:
+            self.request.session.set_expiry(0)  # if remember me is
+            self.request.session.modified = True
         # Вызываем базовый метод form_valid для обработки авторизации
         response = super().form_valid(form)
 

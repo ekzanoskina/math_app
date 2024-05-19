@@ -22,7 +22,7 @@
                                         <h5>Вариант № {{ exam_attempt.exam.id }}</h5>
                                     </div>
                                     <div class="col-md-auto">
-                                        <a href="{% url 'exam' variant_id=exam_attempt.exam.id %}">Повторить</a>
+                                        <a id='variant_exam' href="{% url 'exam' variant_id=exam_attempt.exam.id %}">Повторить</a>
                                     </div>
                                 </div>
                             </div>

@@ -22,10 +22,22 @@ class LoginUserForm(AuthenticationForm):
             'placeholder': 'Пароль'
         })
     )
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input',
+            'id': 'remember_me',
+            'checked': 'checked',  # Add this line if you want it initially checked
+            'placeholder': 'Запомнить меня',
+        })
+    )
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'password']
+        fields = ['username', 'password', 'remember_me']
+        labels = {
+            'remember_me': 'Запомнить меня',
+        }
 
 
 class RegisterUserForm(UserCreationForm):

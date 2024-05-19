@@ -15,12 +15,21 @@ class ShowSubcategory(ListView):
     model = Exercise
     template_name = 'math_app/exercises_list.html'
     context_object_name = 'exercises'
-    allow_empty = False
+    allow_empty = True  # Изменён на True для разрешения пустого queryset
 
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     #     """Добавляет в контекст заголовок страницы с названием подкатегории."""
+    #     #     context = super().get_context_data(**kwargs)
+    #     #     context['title'] = 'Вид - ' + str(context['exercises'][0].subcategory.title).lower()
+    #     #     return context
     def get_context_data(self, *, object_list=None, **kwargs):
-        """Добавляет в контекст заголовок страницы с названием подкатегории."""
+        """Добавляет в контекст заголовок страницы и сообщение о скором добавлении материалов, если список упражнений пуст."""
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Вид - ' + str(context['exercises'][0].subcategory.title).lower()
+        if not context['exercises']:
+            context['message'] = "Материал скоро будет добавлен."
+            context['title'] = "Подкатегория"
+        else:
+            context['title'] = f"Вид - {context['exercises'][0].subcategory.title.lower()}"
         return context
 
     def get_queryset(self):
